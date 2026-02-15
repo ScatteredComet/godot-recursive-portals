@@ -1,0 +1,23 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://03x76v41r47h"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1r41h"]
+transparency = 1
+cull_mode = 2
+stencil_mode = 3
+stencil_flags = 1
+stencil_reference = 3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tt4mf"]
+next_pass = SubResource("StandardMaterial3D_1r41h")
+transparency = 1
+cull_mode = 2
+stencil_mode = 3
+stencil_flags = 1
+
+[resource]
+next_pass = SubResource("StandardMaterial3D_tt4mf")
+transparency = 1
+cull_mode = 2
+stencil_mode = 3
+stencil_flags = 4
+stencil_reference = 0

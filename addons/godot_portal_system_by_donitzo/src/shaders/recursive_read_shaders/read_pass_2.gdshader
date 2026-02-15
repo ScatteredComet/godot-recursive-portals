@@ -1,7 +1,7 @@
 shader_type spatial;
 render_mode unshaded, cull_disabled;
 
-stencil_mode read, 1, compare_equal;
+stencil_mode read, 2, compare_equal;
 
 uniform sampler2D camera_texture : hint_default_black, source_color;
 
@@ -14,6 +14,6 @@ void fragment()
 	
 	if (debug_view_stencil_mask)
 	{
-		ALBEDO = vec3(0., 1., 0.);
+		ALBEDO = vec3(0., 0., 1.);
 	}
 }

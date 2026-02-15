@@ -1,6 +1,6 @@
 shader_type spatial;
 
-stencil_mode write, compare_always, 1;
+stencil_mode write_depth_fail, compare_always, 2;
 
 uniform bool debug_visible = false;
 uniform vec3 debug_color : source_color = vec3(1., 0., 0.);

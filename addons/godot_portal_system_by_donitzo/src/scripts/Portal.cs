@@ -148,7 +148,6 @@ public partial class Portal : MeshInstance3D
 
         GetViewport().SizeChanged += HandleResize;
 
-        passPortals.Add(this);
         // passCameras.Add(mainCamera);
 
         SetupPortalRecursion();
@@ -160,7 +159,7 @@ public partial class Portal : MeshInstance3D
     }
 
     // recursive stuff
-    private const int recursionLimit = 2;
+    private const int recursionLimit = 3;
 
     private const string ShaderTextureName = "camera_texture";
 
@@ -262,24 +261,35 @@ public partial class Portal : MeshInstance3D
     // portal recusions
     private void SetupPortalRecursion()
     {
-        MeshInstance3D recursedPortal = new()
+        passPortals.Add(this);
+
+        for (int i = 1; i < recursionLimit; i++)
         {
-            Mesh = this.Mesh.Duplicate() as Mesh,
-
-            MaterialOverride = new ShaderMaterial()
+            MeshInstance3D recursedPortal = new()
             {
-                Shader = GD.Load("res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_write_shaders/write_pass_1.gdshader") as Shader
+                Mesh = this.Mesh.Duplicate() as Mesh,
+
+                MaterialOverride = GD.Load($"res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_write_standardmaterial3Ds/write_pass_{i}.tres") as StandardMaterial3D
+            };
+
+            if (debugVisible)
+            {
+                (recursedPortal.MaterialOverride as StandardMaterial3D).AlbedoColor = debugColor;
             }
-        };
+            else
+            {
+                (recursedPortal.MaterialOverride as StandardMaterial3D).AlbedoColor = new(0, 0, 0, 0); // make invisible in real world
+            }
 
-        (recursedPortal.MaterialOverride as ShaderMaterial).SetShaderParameter("debug_visible", debugVisible);
-        (recursedPortal.MaterialOverride as ShaderMaterial).SetShaderParameter("debug_color", debugColor);
+            // (recursedPortal.MaterialOverride as ShaderMaterial).SetShaderParameter("debug_visible", debugVisible);
+            // (recursedPortal.MaterialOverride as ShaderMaterial).SetShaderParameter("debug_color", debugColor);
 
-        AddChild(recursedPortal);
+            AddChild(recursedPortal);
 
-        recursedPortal.GlobalTransform = PortalRecusionHelper.PortalImage(exitPortal, this);
+            recursedPortal.GlobalTransform = PortalRecusionHelper.PortalImage(exitPortal, this, i);
 
-        passPortals.Add(recursedPortal);
+            passPortals.Add(recursedPortal);
+        }
     }
 
 
