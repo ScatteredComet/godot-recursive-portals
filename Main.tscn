@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cqow47bch5ocs"]
 
 [ext_resource type="Script" uid="uid://dywc7k3ttbvc2" path="res://addons/godot_portal_system_by_donitzo/src/scripts/Portal.cs" id="1_glv2v"]
+[ext_resource type="PackedScene" uid="uid://ce7k1nl3eb0ej" path="res://CameraDebugMesh.tscn" id="2_fos0i"]
 [ext_resource type="Script" uid="uid://tb3c7sewxg3q" path="res://FreeCam.cs" id="2_uu6xs"]
 [ext_resource type="Script" uid="uid://ds3pm2y6orckk" path="res://addons/godot_portal_system_by_donitzo/src/scripts/AdvancedPortalTeleport.cs" id="3_r0du0"]
 [ext_resource type="Script" uid="uid://bviccwnbgm2kc" path="res://addons/godot_portal_system_by_donitzo/src/scripts/PortalArea3D.cs" id="4_cm0pq"]
@@ -60,6 +61,7 @@ transform = Transform3D(0.9135809, 0, -0.40665698, 0, 1, 0, 0.40665698, 0, 0.913
 mesh = SubResource("PlaneMesh_glv2v")
 script = ExtResource("1_glv2v")
 exitPortal = NodePath("../Portal1")
+cameraDebugMeshScene = ExtResource("2_fos0i")
 debugColor = Color(0.60069364, 0.37961793, 0.97483474, 1)
 
 [node name="Area3D" type="Area3D" parent="Portal2" unique_id=1677528891 node_paths=PackedStringArray("parentPortal")]
@@ -74,6 +76,7 @@ transform = Transform3D(-0.7303173, 0, 0.6831081, 0, 1, 0, -0.6831081, 0, -0.730
 mesh = SubResource("PlaneMesh_glv2v")
 script = ExtResource("1_glv2v")
 exitPortal = NodePath("../Portal2")
+cameraDebugMeshScene = ExtResource("2_fos0i")
 
 [node name="Area3D" type="Area3D" parent="Portal1" unique_id=1396575006 node_paths=PackedStringArray("parentPortal")]
 script = ExtResource("3_r0du0")

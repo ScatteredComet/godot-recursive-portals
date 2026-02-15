@@ -167,6 +167,9 @@ public partial class Portal : MeshInstance3D
     private List<Camera3D> passCameras = [];
     private List<SubViewport> passSubViewports = [];
 
+    [Export] private PackedScene cameraDebugMeshScene;
+    private List<MeshInstance3D> cameraDebugMeshes = [];
+
     // Create the viewport for the portal surface
     private void CreateViewports()
     {
@@ -203,6 +206,13 @@ public partial class Portal : MeshInstance3D
             passSubViewport.AddChild(passCamera);
 
             currentPassMaterial = currentPassMaterial.NextPass as ShaderMaterial;
+
+            if (cameraDebugMeshScene is not null)
+            {
+                MeshInstance3D m = cameraDebugMeshScene.Instantiate() as MeshInstance3D;
+                passCamera.AddChild(m);
+                (m.GetActiveMaterial(0) as StandardMaterial3D).AlbedoColor = debugColor;
+            }
         }
 
         // Resize the viewport on the next _process
