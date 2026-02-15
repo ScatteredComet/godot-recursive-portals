@@ -73,10 +73,6 @@ public partial class Portal : MeshInstance3D
     // CollisionShape used for teleporting objects. Needed so that the collision shape can be reshaped at runtime to match a photo's shape
     [Export] public CollisionShape3D collisionShape3D;
 
-    // leave negative to ignore
-    // for photogame, set this to be the same FOV as the player's camera
-    [Export] private float FOVOverride = -1;
-
     [Export] public AdvancedPortalTeleport advancedPortalTeleport {get; private set;}
 
     public override void _Ready()
@@ -260,6 +256,9 @@ public partial class Portal : MeshInstance3D
 
     private List<MeshInstance3D> passPortals = [];
 
+    [Export] private bool debugVisible = false;
+    [Export] private Color debugColor = new(1, 0, 0);
+
     // portal recusions
     private void SetupPortalRecursion()
     {
@@ -272,6 +271,9 @@ public partial class Portal : MeshInstance3D
                 Shader = GD.Load("res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_write_shaders/write_pass_1.gdshader") as Shader
             }
         };
+
+        (recursedPortal.MaterialOverride as ShaderMaterial).SetShaderParameter("debug_visible", debugVisible);
+        (recursedPortal.MaterialOverride as ShaderMaterial).SetShaderParameter("debug_color", debugColor);
 
         AddChild(recursedPortal);
 
