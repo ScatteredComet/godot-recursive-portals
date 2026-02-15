@@ -1,0 +1,111 @@
+[gd_scene format=3 uid="uid://cqow47bch5ocs"]
+
+[ext_resource type="Script" uid="uid://dywc7k3ttbvc2" path="res://addons/godot_portal_system_by_donitzo/src/scripts/Portal.cs" id="1_glv2v"]
+[ext_resource type="Script" uid="uid://tb3c7sewxg3q" path="res://FreeCam.cs" id="2_uu6xs"]
+[ext_resource type="Script" uid="uid://ds3pm2y6orckk" path="res://addons/godot_portal_system_by_donitzo/src/scripts/AdvancedPortalTeleport.cs" id="3_r0du0"]
+[ext_resource type="Script" uid="uid://bviccwnbgm2kc" path="res://addons/godot_portal_system_by_donitzo/src/scripts/PortalArea3D.cs" id="4_cm0pq"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_uu6xs"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_r0du0"]
+sky_material = SubResource("ProceduralSkyMaterial_uu6xs")
+
+[sub_resource type="Environment" id="Environment_cm0pq"]
+background_mode = 2
+sky = SubResource("Sky_r0du0")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_glv2v"]
+orientation = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_r0du0"]
+size = Vector3(2, 2, 0.001)
+
+[sub_resource type="SphereMesh" id="SphereMesh_uu6xs"]
+radius = 0.2
+height = 0.4
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_cm0pq"]
+radius = 0.2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uu6xs"]
+albedo_color = Color(1, 0.3137255, 1, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_rxg2q"]
+material = SubResource("StandardMaterial3D_uu6xs")
+size = Vector2(10, 10)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r0du0"]
+albedo_color = Color(0.23529412, 0.38431373, 0.9098039, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_cm0pq"]
+material = SubResource("StandardMaterial3D_r0du0")
+
+[sub_resource type="BoxMesh" id="BoxMesh_cm0pq"]
+
+[node name="Node3D" type="Node3D" unique_id=1454724241]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1837707995]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1824610887]
+environment = SubResource("Environment_cm0pq")
+
+[node name="Portal1" type="MeshInstance3D" parent="." unique_id=1476253194 node_paths=PackedStringArray("exitPortal")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0757494, -2.0609045)
+mesh = SubResource("PlaneMesh_glv2v")
+script = ExtResource("1_glv2v")
+exitPortal = NodePath("../Portal2")
+
+[node name="Area3D" type="Area3D" parent="Portal1" unique_id=1396575006 node_paths=PackedStringArray("parentPortal")]
+script = ExtResource("3_r0du0")
+parentPortal = NodePath("..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Portal1/Area3D" unique_id=2074763404]
+shape = SubResource("BoxShape3D_r0du0")
+
+[node name="Portal2" type="MeshInstance3D" parent="." unique_id=1727868052 node_paths=PackedStringArray("exitPortal")]
+transform = Transform3D(-0.9151779, 0, 0.40305018, 0, 1, 0, -0.40305018, 0, -0.9151779, -0.410398, 1.0757494, 2.3573635)
+mesh = SubResource("PlaneMesh_glv2v")
+script = ExtResource("1_glv2v")
+exitPortal = NodePath("../Portal1")
+
+[node name="Area3D" type="Area3D" parent="Portal2" unique_id=1677528891 node_paths=PackedStringArray("parentPortal")]
+script = ExtResource("3_r0du0")
+parentPortal = NodePath("..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Portal2/Area3D" unique_id=1789286777]
+shape = SubResource("BoxShape3D_r0du0")
+
+[node name="FreeCam" type="Camera3D" parent="." unique_id=1141824984]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0983315, 0)
+current = true
+script = ExtResource("2_uu6xs")
+
+[node name="PortalableObject" type="Area3D" parent="FreeCam" unique_id=482451511 node_paths=PackedStringArray("TeleportableRoot")]
+visible = false
+script = ExtResource("4_cm0pq")
+TeleportableRoot = NodePath("..")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="FreeCam/PortalableObject" unique_id=1431362729]
+mesh = SubResource("SphereMesh_uu6xs")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FreeCam/PortalableObject" unique_id=136915006]
+shape = SubResource("SphereShape3D_cm0pq")
+
+[node name="Environment" type="Node" parent="." unique_id=1949652856]
+
+[node name="Floor" type="MeshInstance3D" parent="Environment" unique_id=645416448]
+mesh = SubResource("PlaneMesh_rxg2q")
+
+[node name="Sphere" type="MeshInstance3D" parent="Environment" unique_id=1924107370]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9546111, 0.93929577, 0)
+mesh = SubResource("SphereMesh_cm0pq")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Environment" unique_id=1248733331]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.845246, 0.20587063, 0)
+mesh = SubResource("BoxMesh_cm0pq")

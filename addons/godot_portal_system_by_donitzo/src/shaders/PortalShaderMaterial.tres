@@ -1,0 +1,19 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dhe4wie8j87jj"]
+
+[ext_resource type="Shader" uid="uid://bwfy882j1khw0" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_read_shaders/read_pass_1.gdshader" id="1_58dj5"]
+[ext_resource type="Shader" uid="uid://c6qvi3f0huemx" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_read_shaders/read_pass_0.gdshader" id="2_0pmig"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_58dj5"]
+render_priority = 0
+shader = ExtResource("1_58dj5")
+shader_parameter/fade_out_distance_max = 10.0
+shader_parameter/fade_out_distance_min = 8.0
+shader_parameter/fade_out_color = Vector4(0, 0, 0, 0)
+
+[resource]
+render_priority = 1
+next_pass = SubResource("ShaderMaterial_58dj5")
+shader = ExtResource("2_0pmig")
+shader_parameter/fade_out_distance_max = 10.0
+shader_parameter/fade_out_distance_min = 8.0
+shader_parameter/fade_out_color = Vector4(0, 0, 0, 0)
