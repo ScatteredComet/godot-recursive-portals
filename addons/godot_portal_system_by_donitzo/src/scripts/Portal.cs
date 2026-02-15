@@ -63,7 +63,7 @@ public partial class Portal : MeshInstance3D
     [Export] public Portal exitPortal;
 
     // The viewport rendering the portal surface
-    private SubViewport passSubViewport;
+    // private SubViewport passSubViewport;
 
     private float secondsUntilResize;
 
@@ -147,7 +147,7 @@ public partial class Portal : MeshInstance3D
         // Create the viewport when _ready if it's not destroyed when disabled. This may potentially get rid of the initial lag when the viewport is first created at the cost of texture memory.
         if (!destroyDisabledViewport)
         {
-            CreateViewport();
+            CreateViewports();
         }
 
         GetViewport().SizeChanged += HandleResize;
@@ -173,7 +173,7 @@ public partial class Portal : MeshInstance3D
     private List<SubViewport> passSubViewports = [];
 
     // Create the viewport for the portal surface
-    private void CreateViewport()
+    private void CreateViewports()
     {
         // create a linear environment (avoid applying tonemaps & adjustments multiple times)
         Godot.Environment linearEnvironment = GetViewport().World3D.Environment.Duplicate() as Godot.Environment;
@@ -184,7 +184,7 @@ public partial class Portal : MeshInstance3D
 
         for (int i = 0; i < recursionLimit; i++)
         {
-            passSubViewport = new()
+            SubViewport passSubViewport = new()
             {
                 Name = $"PortalSubViewport-Pass{i}",
                 // RenderTargetClearMode = SubViewport.ClearMode.Once
@@ -217,69 +217,10 @@ public partial class Portal : MeshInstance3D
     public override void _PhysicsProcess(double delta)
     {
         base._PhysicsProcess(delta);
-        
-        // Disable the viewport if the portal is further away than disable_viewport_distance or if the portal is invisible in the scene tree
-        bool disableViewport = 
-            !IsVisibleInTree() ||
-            mainCamera.GlobalPosition.DistanceSquaredTo(GlobalPosition) > Math.Pow(disableViewportDistance, 2);
-        
-        // Enable or disable 3D rendering for the viewport (if it exists)
-        if (passSubViewport is not null)
+
+        if (passSubViewports.Count == 0)
         {
-            passSubViewport.Disable3D = disableViewport;
-        }
-
-        if (disableViewport)
-        {
-            // Destroy the disabled viewport to save memory
-
-            if (passSubViewport is not null && destroyDisabledViewport)
-            {
-                (MaterialOverride as ShaderMaterial).SetShaderParameter(ShaderTextureName, default(Variant));
-                passSubViewport.QueueFree();
-                passSubViewport = null;
-            }
-
-            // Ensure the portal can re-size the second it is enabled again
-            if (!float.IsNaN(secondsUntilResize))
-            {
-                secondsUntilResize = 0f;
-            }
-
-            // Don't process the rest if the viewport is disabled
-            return;
-        }
-
-        // Re/-Create viewport
-        if (passSubViewport is null)
-        {
-            CreateViewport();
-        }
-
-        // Throttle the viewport resizing for better performance
-        if (!float.IsNaN(secondsUntilResize))
-        {
-            secondsUntilResize -= (float)delta;
-
-            if (secondsUntilResize <= 0)
-            {
-                secondsUntilResize = float.NaN;
-
-                Vector2I viewportSize = (Vector2I)GetViewport().GetVisibleRect().Size;
-
-                if (verticalViewportResolution == 0)
-                {
-                    passSubViewport.Size = viewportSize;
-                }
-                else
-                {
-                    float aspectRatio = (float)viewportSize.X / viewportSize.Y;
-                    passSubViewport.Size = new Vector2I(
-                        (int)(verticalViewportResolution * aspectRatio + .5f),
-                        verticalViewportResolution
-                    );
-                }
-            }
+            CreateViewports();
         }
 
         // Move the exit camera relative to the exit portal based on the main camera's position relative to the entrance portal    

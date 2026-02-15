@@ -55,21 +55,8 @@ shadow_enabled = true
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1824610887]
 environment = SubResource("Environment_cm0pq")
 
-[node name="Portal1" type="MeshInstance3D" parent="." unique_id=1476253194 node_paths=PackedStringArray("exitPortal")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0757494, -2.0609045)
-mesh = SubResource("PlaneMesh_glv2v")
-script = ExtResource("1_glv2v")
-exitPortal = NodePath("../Portal2")
-
-[node name="Area3D" type="Area3D" parent="Portal1" unique_id=1396575006 node_paths=PackedStringArray("parentPortal")]
-script = ExtResource("3_r0du0")
-parentPortal = NodePath("..")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Portal1/Area3D" unique_id=2074763404]
-shape = SubResource("BoxShape3D_r0du0")
-
 [node name="Portal2" type="MeshInstance3D" parent="." unique_id=1727868052 node_paths=PackedStringArray("exitPortal")]
-transform = Transform3D(-0.9151779, 0, 0.40305018, 0, 1, 0, -0.40305018, 0, -0.9151779, -0.410398, 1.0757494, 2.3573635)
+transform = Transform3D(0.9135809, 0, -0.40665698, 0, 1, 0, 0.40665698, 0, 0.9135809, 2.1733263, 1.0757494, -3.5093195)
 mesh = SubResource("PlaneMesh_glv2v")
 script = ExtResource("1_glv2v")
 exitPortal = NodePath("../Portal1")
@@ -79,6 +66,19 @@ script = ExtResource("3_r0du0")
 parentPortal = NodePath("..")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Portal2/Area3D" unique_id=1789286777]
+shape = SubResource("BoxShape3D_r0du0")
+
+[node name="Portal1" type="MeshInstance3D" parent="." unique_id=1476253194 node_paths=PackedStringArray("exitPortal")]
+transform = Transform3D(-0.7303173, 0, 0.6831081, 0, 1, 0, -0.6831081, 0, -0.7303173, 0, 1.0757494, 1.2223372)
+mesh = SubResource("PlaneMesh_glv2v")
+script = ExtResource("1_glv2v")
+exitPortal = NodePath("../Portal2")
+
+[node name="Area3D" type="Area3D" parent="Portal1" unique_id=1396575006 node_paths=PackedStringArray("parentPortal")]
+script = ExtResource("3_r0du0")
+parentPortal = NodePath("..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Portal1/Area3D" unique_id=2074763404]
 shape = SubResource("BoxShape3D_r0du0")
 
 [node name="FreeCam" type="Camera3D" parent="." unique_id=1141824984]
