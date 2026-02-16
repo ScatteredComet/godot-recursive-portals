@@ -99,38 +99,6 @@ public partial class AdvancedPortalTeleport : Area3D
         return true;
     }
 
-    [Export] private RayCast3D GetNearbyNormalRayCast3D;
-
-    private Vector3? GetNearbyNormal()
-    {
-        RayCast3D exitRayCast = parentPortal.exitPortal.advancedPortalTeleport.GetNearbyNormalRayCast3D;
-
-        if (exitRayCast is null)
-        {
-            return null;
-        }
-
-        if (!exitRayCast.IsColliding())
-        {
-            return null;
-        }
-
-        return exitRayCast.GetCollisionNormal();
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // signal recievers
     private void OnAreaEntered(Area3D area3D)
     {

@@ -63,17 +63,35 @@ public partial class Portal : MeshInstance3D
     [Export] public Portal exitPortal;
 
     // The viewport rendering the portal surface
+    // Modified by ScatteredComet: replaced by passSubViewports (List)
     // private SubViewport passSubViewport;
 
     private float secondsUntilResize;
 
     // added by ScatteredComet
-    [Export] private bool delayedReady;
+    // recursive stuff
 
-    // CollisionShape used for teleporting objects. Needed so that the collision shape can be reshaped at runtime to match a photo's shape
-    [Export] public CollisionShape3D collisionShape3D;
+    // recursionLimit = 1 corresponds to not being able to see portals in portals at all. seeing a portal in a portal corresponds to a recursion limit of 2, etc 
+    private const int recursionLimit = 3;
 
-    [Export] public AdvancedPortalTeleport advancedPortalTeleport {get; private set;}
+    private const string ShaderTextureName = "camera_texture";
+
+    // A list of the virtual cameras; there is one for each portal mesh (including the original portals)
+    private List<Camera3D> passCameras = [];
+    // A list of the subviewports used to render each of the camera textures (again, 1 for each portal mesh)
+    private List<SubViewport> passSubViewports = [];
+    // a list of virtual portals for this portal. index 0 is the exit portal, index 1 is the exit portal duplicated and transformed twice (so 1 "iteration" further away from this portal) etc. These can be visualised using the debugVisible bool.
+    private List<MeshInstance3D> passPortals = [];
+
+    // --- DEBUGGING --- //
+
+    // show the position of the camera relative to the virtual portals. Set as null to hide.
+    [Export] private PackedScene cameraDebugMeshScene;
+    private const int CameraDebugMeshVisualLayer = 5;
+    
+    // set true to see virtual portals. Can set a different colour for each portal's corresponding virtual portals
+    [Export] private bool debugVisible = false;
+    [Export] private Color debugColor = new(1, 0, 0);
 
     public override void _Ready()
     {
@@ -92,22 +110,6 @@ public partial class Portal : MeshInstance3D
         {
             paused = !paused;
         }
-
-        // if (Input.IsActionJustPressed("debug_reset_subviewports"))
-        // {
-        //     foreach (Node node in passCameras)
-        //     {
-        //         node.QueueFree();
-        //     }
-        //     foreach (Node node in passSubViewports)
-        //     {
-        //         node.QueueFree();
-        //     }
-
-        //     passCameras.Clear();
-        //     passSubViewports.Clear();
-        //     CreateViewports();
-        // }
     }
 
     // call this once you've set up the portal (if using delayed_ready)
@@ -155,12 +157,10 @@ public partial class Portal : MeshInstance3D
 
         // The portal shader renders the viewport on-top of the portal mesh in screen-space
         MaterialOverride = GD.Load("res://addons/godot_portal_system_by_donitzo/src/shaders/PortalShaderMaterial.tres") as ShaderMaterial;
-        // this MUST be a deep copy (I believe to copy over nextPasses) - otherwise only the portal which renders SECOND in the scene tree will render correctly (as it overwrites textures in the first portal's shader)
-        MaterialOverride = MaterialOverride.Duplicate(true) as ShaderMaterial; // dupe so camera texture can be unique for each instance
         
-        // MaterialOverride.SetShaderParameter("fade_out_distance_max", fadeOutDistanceMax);
-        // MaterialOverride.SetShaderParameter("fade_out_distance_min", fadeOutDistanceMin);
-        // MaterialOverride.SetShaderParameter("fade_out_color", fadeOutColor);
+        // this MUST be a deep copy (I believe to copy over nextPasses) - otherwise only the portal which renders SECOND in the scene tree will render correctly (as it overwrites textures in the first portal's shader)
+        // This line makes sure that textures are not being shared between different portals, i.e. that each portal has its own unique shader which contains its own unique textures.
+        MaterialOverride = MaterialOverride.Duplicate(true) as ShaderMaterial; // dupe so camera texture can be unique for each instance
 
         // Create the viewport when _ready if it's not destroyed when disabled. This may potentially get rid of the initial lag when the viewport is first created at the cost of texture memory.
         if (!destroyDisabledViewport)
@@ -179,20 +179,6 @@ public partial class Portal : MeshInstance3D
     {
         secondsUntilResize = ResizeThrottleSeconds;
     }
-
-    // recursive stuff
-    private const int recursionLimit = 3;
-
-    private const string ShaderTextureName = "camera_texture";
-
-    // The exit cameras copy the main camera's position relative to the exit portal
-    private List<Camera3D> passCameras = [];
-    private List<SubViewport> passSubViewports = [];
-
-    [Export] private PackedScene cameraDebugMeshScene;
-    private List<MeshInstance3D> cameraDebugMeshes = [];
-
-    private const int CameraDebugMeshVisualLayer = 5;
 
     // Create the viewport for the portal surface
     private void CreateViewports()
@@ -248,9 +234,6 @@ public partial class Portal : MeshInstance3D
         secondsUntilResize = 0f;
     }
 
-    private const int LowPhysicsPriority = 0;
-    private const int HighPhysicsPriority = 10;
-
     public override void _PhysicsProcess(double delta)
     {
         base._PhysicsProcess(delta);
@@ -259,18 +242,6 @@ public partial class Portal : MeshInstance3D
         {
             return;
         }
-
-        // if camera is facing this portal, make it last in the scene tree
-        // if (-mainCamera.GlobalBasis.Z.Dot(GlobalBasis.Z) < 0)
-        // {
-        //     // GD.Print($"{Name} is high priority");
-        //     GetParent().MoveChild(this, 0);
-        // }
-        // else
-        // {
-        //     // GD.Print($"{Name} is low priority");
-        //     GetParent().MoveChild(this, -1);
-        // }
 
         if (passSubViewports.Count == 0)
         {
@@ -289,7 +260,8 @@ public partial class Portal : MeshInstance3D
             }
             catch (ArgumentOutOfRangeException)
             {
-                GD.Print($"{i}");
+                // above line will fail on ready as only 1 portal has had its passCameras setup.
+                // GD.Print($"{i}");
             }
         }
     }
@@ -319,11 +291,6 @@ public partial class Portal : MeshInstance3D
 
         return;
     }
-
-    private List<MeshInstance3D> passPortals = [];
-
-    [Export] private bool debugVisible = false;
-    [Export] private Color debugColor = new(1, 0, 0);
 
     // portal recusions
     private void SetupPortalRecursion()
