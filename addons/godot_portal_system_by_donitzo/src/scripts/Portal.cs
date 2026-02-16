@@ -78,23 +78,27 @@ public partial class Portal : MeshInstance3D
     public override void _Ready()
     {
         base._Ready();
+
+        Startup();
+    }
+
+    private bool paused = false;
+
+    public override void _UnhandledInput(InputEvent @event)
+    {
+        base._UnhandledInput(@event);
         
-        if (delayedReady)
+        if (Input.IsActionJustPressed("debug_pause_portals"))
         {
-            SetProcess(false);
-            return;
-        }
-        else
-        {
-            Startup();
+            paused = !paused;
         }
     }
 
     // call this once you've set up the portal (if using delayed_ready)
     public void Startup()
     {
-        SetProcess(true);
-
+        GD.Print($"{Name} is starting up");
+        
         if (!IsInsideTree())
         {
             GD.PushError($"[Portals] :The portal {Name} is not inside a SceneTree.");
@@ -126,7 +130,6 @@ public partial class Portal : MeshInstance3D
         }
 
         // The portals should be updated last so the main camera has its final position
-        ProcessPriority = 1000;
 
         AddToGroup(PortalRayCasting.GroupName);
 
@@ -170,6 +173,8 @@ public partial class Portal : MeshInstance3D
     [Export] private PackedScene cameraDebugMeshScene;
     private List<MeshInstance3D> cameraDebugMeshes = [];
 
+    private const int CameraDebugMeshVisualLayer = 5;
+
     // Create the viewport for the portal surface
     private void CreateViewports()
     {
@@ -199,11 +204,16 @@ public partial class Portal : MeshInstance3D
                 Environment = linearEnvironment
             };
 
+            passCamera.SetCullMaskValue(CameraDebugMeshVisualLayer, false); // dont show debug meshes in the portals (it gets messy)
+
             passCameras.Add(passCamera);
             passSubViewports.Add(passSubViewport);
 
             AddChild(passSubViewport);
             passSubViewport.AddChild(passCamera);
+            
+            // passCamera.ProcessPriority = ProcessPhysicsPriority + 100 - i;
+            // passSubViewport.ProcessPriority = ProcessPhysicsPriority + 100 - i;
 
             currentPassMaterial = currentPassMaterial.NextPass as ShaderMaterial;
 
@@ -211,6 +221,7 @@ public partial class Portal : MeshInstance3D
             {
                 MeshInstance3D m = cameraDebugMeshScene.Instantiate() as MeshInstance3D;
                 passCamera.AddChild(m);
+                m.SetSurfaceOverrideMaterial(0, m.GetActiveMaterial(0).Duplicate() as StandardMaterial3D);
                 (m.GetActiveMaterial(0) as StandardMaterial3D).AlbedoColor = debugColor;
             }
         }
@@ -218,10 +229,29 @@ public partial class Portal : MeshInstance3D
         // Resize the viewport on the next _process
         secondsUntilResize = 0f;
     }
+    private const int LowPhysicsPriority = 0;
+    private const int HighPhysicsPriority = 10;
 
     public override void _PhysicsProcess(double delta)
     {
         base._PhysicsProcess(delta);
+
+        if (paused)
+        {
+            return;
+        }
+
+        // if camera is facing this portal, make it render last (high phys priority)
+        // if (-mainCamera.GlobalBasis.Z.Dot(GlobalBasis.Z) < 0)
+        // {
+        //     GD.Print($"{Name} is high priority");
+        //     GetParent().MoveChild(this, -1);
+        // }
+        // else
+        // {
+        //     GD.Print($"{Name} is low priority");
+        //     GetParent().MoveChild(this, 0);
+        // }
 
         if (passSubViewports.Count == 0)
         {
@@ -233,7 +263,15 @@ public partial class Portal : MeshInstance3D
         for (int i = 0; i < recursionLimit; i++)
         {
             passCameras[i].GlobalTransform = RealToExitTransform(mainCamera.GlobalTransform, exitPortal.passPortals[i]);
-            SetCameraClippingPlane(exitPortal.passCameras[i], this);
+            try
+            {
+                SetCameraClippingPlane(exitPortal.passCameras[i], this);
+                GD.Print(Name);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                GD.Print($"{i}");
+            }
         }
     }
 
@@ -290,9 +328,6 @@ public partial class Portal : MeshInstance3D
             {
                 (recursedPortal.MaterialOverride as StandardMaterial3D).AlbedoColor = new(0, 0, 0, 0); // make invisible in real world
             }
-
-            // (recursedPortal.MaterialOverride as ShaderMaterial).SetShaderParameter("debug_visible", debugVisible);
-            // (recursedPortal.MaterialOverride as ShaderMaterial).SetShaderParameter("debug_color", debugColor);
 
             AddChild(recursedPortal);
 

@@ -62,6 +62,7 @@ mesh = SubResource("PlaneMesh_glv2v")
 script = ExtResource("1_glv2v")
 exitPortal = NodePath("../Portal1")
 cameraDebugMeshScene = ExtResource("2_fos0i")
+debugVisible = true
 debugColor = Color(0.60069364, 0.37961793, 0.97483474, 1)
 
 [node name="Area3D" type="Area3D" parent="Portal2" unique_id=1677528891 node_paths=PackedStringArray("parentPortal")]
@@ -77,6 +78,7 @@ mesh = SubResource("PlaneMesh_glv2v")
 script = ExtResource("1_glv2v")
 exitPortal = NodePath("../Portal2")
 cameraDebugMeshScene = ExtResource("2_fos0i")
+debugVisible = true
 
 [node name="Area3D" type="Area3D" parent="Portal1" unique_id=1396575006 node_paths=PackedStringArray("parentPortal")]
 script = ExtResource("3_r0du0")
@@ -107,7 +109,7 @@ shape = SubResource("SphereShape3D_cm0pq")
 mesh = SubResource("PlaneMesh_rxg2q")
 
 [node name="Sphere" type="MeshInstance3D" parent="Environment" unique_id=1924107370]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9546111, 0.93929577, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2831442, 0.93929577, 1.1187465)
 mesh = SubResource("SphereMesh_cm0pq")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Environment" unique_id=1248733331]

@@ -1,12 +1,25 @@
 [gd_scene format=3 uid="uid://ce7k1nl3eb0ej"]
 
-[sub_resource type="PrismMesh" id="PrismMesh_c1jb7"]
+[sub_resource type="BoxMesh" id="BoxMesh_c1jb7"]
+size = Vector3(0.3, 0.3, 1.615)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w322x"]
 no_depth_test = true
 albedo_color = Color(1, 0.24705882, 1, 1)
 
+[sub_resource type="PrismMesh" id="PrismMesh_w322x"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c1jb7"]
+no_depth_test = true
+
 [node name="CameraDebugMesh" type="MeshInstance3D" unique_id=2083870987]
-transform = Transform3D(0.36, 0, 0, 0, -0.012538716, 0.3597816, 0, -0.3597816, -0.012538716, 0, 0, 0)
-mesh = SubResource("PrismMesh_c1jb7")
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+layers = 16
+mesh = SubResource("BoxMesh_c1jb7")
 surface_material_override/0 = SubResource("StandardMaterial3D_w322x")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=526935935]
+transform = Transform3D(0.465, 0, 0, 0, -0.026119057, 0.46426585, 0, -0.46426585, -0.026119057, 0, -0.016058799, -1.0854433)
+layers = 16
+mesh = SubResource("PrismMesh_w322x")
+surface_material_override/0 = SubResource("StandardMaterial3D_c1jb7")
