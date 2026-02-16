@@ -72,7 +72,8 @@ public partial class Portal : MeshInstance3D
     // recursive stuff
 
     // recursionLimit = 1 corresponds to not being able to see portals in portals at all. seeing a portal in a portal corresponds to a recursion limit of 2, etc 
-    private const int recursionLimit = 3;
+    // this can be up to and including 6 as of this commit (but can be extended indefinitely by creating more write / read pass material / shaders)
+    private const int recursionLimit = 6;
 
     private const string ShaderTextureName = "camera_texture";
 
@@ -292,6 +293,8 @@ public partial class Portal : MeshInstance3D
         return;
     }
 
+    private const int WritePassLayer = 10;
+
     // portal recusions
     private void SetupPortalRecursion()
     {
@@ -320,6 +323,9 @@ public partial class Portal : MeshInstance3D
             recursedPortal.GlobalTransform = PortalRecusionHelper.PortalImage(exitPortal, this, i);
 
             passPortals.Add(recursedPortal);
+
+            // recursedPortal.Layers = 0;
+            // recursedPortal.SetLayerMaskValue(WritePassLayer, true);
         }
     }
 

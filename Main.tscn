@@ -57,7 +57,7 @@ shadow_enabled = true
 environment = SubResource("Environment_cm0pq")
 
 [node name="Portal2" type="MeshInstance3D" parent="." unique_id=1727868052 node_paths=PackedStringArray("exitPortal")]
-transform = Transform3D(0.9135809, 0, -0.40665698, 0, 1, 0, 0.40665698, 0, 0.9135809, 2.1733263, 1.0757494, -3.5093195)
+transform = Transform3D(0.754469, 0, -0.65633565, 0, 1, 0, 0.65633565, 0, 0.754469, 2.5649107, 1.0757494, -1.5877968)
 mesh = SubResource("PlaneMesh_glv2v")
 script = ExtResource("1_glv2v")
 exitPortal = NodePath("../Portal1")

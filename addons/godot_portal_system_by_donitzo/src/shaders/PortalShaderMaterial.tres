@@ -2,10 +2,31 @@
 
 [ext_resource type="Shader" uid="uid://btqta6jnguoqy" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_read_shaders/read_pass_2.gdshader" id="1_0pmig"]
 [ext_resource type="Shader" uid="uid://bwfy882j1khw0" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_read_shaders/read_pass_1.gdshader" id="1_58dj5"]
+[ext_resource type="Shader" uid="uid://b10i5u2qg15n0" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_read_shaders/read_pass_5.gdshader" id="1_j3yee"]
 [ext_resource type="Shader" uid="uid://c6qvi3f0huemx" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_read_shaders/read_pass_0.gdshader" id="2_0pmig"]
+[ext_resource type="Shader" uid="uid://dh8lcpyer4okt" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_read_shaders/read_pass_4.gdshader" id="2_bxsuq"]
+[ext_resource type="Shader" uid="uid://bl5npi8d6uub2" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_read_shaders/read_pass_3.gdshader" id="3_tvnvn"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0gknc"]
+render_priority = 0
+shader = ExtResource("1_j3yee")
+shader_parameter/debug_view_stencil_mask = false
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b22ql"]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_0gknc")
+shader = ExtResource("2_bxsuq")
+shader_parameter/debug_view_stencil_mask = false
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hw5yf"]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_b22ql")
+shader = ExtResource("3_tvnvn")
+shader_parameter/debug_view_stencil_mask = false
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_0pmig"]
 render_priority = 0
+next_pass = SubResource("ShaderMaterial_hw5yf")
 shader = ExtResource("1_0pmig")
 shader_parameter/debug_view_stencil_mask = false
 

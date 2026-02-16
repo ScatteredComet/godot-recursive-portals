@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://crw0piacjcx5g"]
+
+[resource]
+cull_mode = 2
+stencil_mode = 3
+stencil_flags = 4
+stencil_reference = 5
