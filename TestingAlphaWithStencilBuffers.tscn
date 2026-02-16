@@ -1,0 +1,81 @@
+[gd_scene format=3 uid="uid://cxy7g7q8c0vj8"]
+
+[ext_resource type="Shader" uid="uid://b10i5u2qg15n0" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_read_shaders/read_pass_5.gdshader" id="1_3a8cw"]
+[ext_resource type="Shader" uid="uid://dh8lcpyer4okt" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_read_shaders/read_pass_4.gdshader" id="2_2vtku"]
+[ext_resource type="Material" uid="uid://dp16jxy0nvi48" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_write_standardmaterial3Ds/write_pass_1.tres" id="2_6jxvq"]
+[ext_resource type="Shader" uid="uid://bl5npi8d6uub2" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_read_shaders/read_pass_3.gdshader" id="3_gxcog"]
+[ext_resource type="Material" uid="uid://criymgpo6j3j8" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_write_standardmaterial3Ds/write_pass_2.tres" id="3_udlhw"]
+[ext_resource type="Material" uid="uid://dck1s70wu4i7f" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_write_standardmaterial3Ds/write_pass_3.tres" id="4_rdrn3"]
+[ext_resource type="Shader" uid="uid://btqta6jnguoqy" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_read_shaders/read_pass_2.gdshader" id="4_uxhp5"]
+[ext_resource type="Shader" uid="uid://bwfy882j1khw0" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_read_shaders/read_pass_1.gdshader" id="5_gk3r4"]
+[ext_resource type="Material" uid="uid://dju63f77l81pi" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_write_standardmaterial3Ds/write_pass_4.tres" id="5_udlhw"]
+[ext_resource type="Shader" uid="uid://c6qvi3f0huemx" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_read_shaders/read_pass_0.gdshader" id="6_2l1u4"]
+[ext_resource type="Material" uid="uid://crw0piacjcx5g" path="res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_write_standardmaterial3Ds/write_pass_5.tres" id="6_rdrn3"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_k6buf"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_f7vm2"]
+render_priority = 0
+shader = ExtResource("1_3a8cw")
+shader_parameter/debug_view_stencil_mask = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kfi2i"]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_f7vm2")
+shader = ExtResource("2_2vtku")
+shader_parameter/debug_view_stencil_mask = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_w4rbt"]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_kfi2i")
+shader = ExtResource("3_gxcog")
+shader_parameter/debug_view_stencil_mask = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c63tl"]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_w4rbt")
+shader = ExtResource("4_uxhp5")
+shader_parameter/debug_view_stencil_mask = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_il3nj"]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_c63tl")
+shader = ExtResource("5_gk3r4")
+shader_parameter/debug_view_stencil_mask = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_11gur"]
+render_priority = -1
+next_pass = SubResource("ShaderMaterial_il3nj")
+shader = ExtResource("6_2l1u4")
+shader_parameter/debug_view_stencil_mask = true
+
+[node name="TestingAlphaWithStencilBuffers" type="Node3D" unique_id=1117272570]
+
+[node name="Reader" type="MeshInstance3D" parent="." unique_id=1711937849]
+mesh = SubResource("PlaneMesh_k6buf")
+surface_material_override/0 = SubResource("ShaderMaterial_11gur")
+
+[node name="Writer1" type="MeshInstance3D" parent="." unique_id=995600113]
+transform = Transform3D(0.735, 0, 0, 0, 0.735, 0, 0, 0, 0.735, 0.0049088597, -1.115, 0)
+mesh = SubResource("PlaneMesh_k6buf")
+surface_material_override/0 = ExtResource("2_6jxvq")
+
+[node name="Writer2" type="MeshInstance3D" parent="." unique_id=1583823559]
+transform = Transform3D(0.43, 0, 0, 0, 0.43, 0, 0, 0, 0.43, 0, -1.8673078, 0)
+mesh = SubResource("PlaneMesh_k6buf")
+surface_material_override/0 = ExtResource("3_udlhw")
+
+[node name="Writer3" type="MeshInstance3D" parent="." unique_id=1122681039]
+transform = Transform3D(0.26, 0, 0, 0, 0.26, 0, 0, 0, 0.26, 0, -2.1028943, 0)
+mesh = SubResource("PlaneMesh_k6buf")
+surface_material_override/0 = ExtResource("4_rdrn3")
+
+[node name="Writer4" type="MeshInstance3D" parent="." unique_id=443496115]
+transform = Transform3D(0.26, 0, 0, 0, 0.26, 0, 0, 0, 0.26, 0, -2.4407358, 0)
+mesh = SubResource("PlaneMesh_k6buf")
+surface_material_override/0 = ExtResource("5_udlhw")
+
+[node name="Writer5" type="MeshInstance3D" parent="." unique_id=748211503]
+transform = Transform3D(0.165, 0, 0, 0, 0.165, 0, 0, 0, 0.165, 0, -2.6946597, 0)
+mesh = SubResource("PlaneMesh_k6buf")
+surface_material_override/0 = ExtResource("6_rdrn3")

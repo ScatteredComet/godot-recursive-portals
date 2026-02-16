@@ -11,7 +11,7 @@
 shader_type spatial;
 render_mode unshaded;
 
-//stencil_mode read, 0, compare_less_or_equal;
+//stencil_mode read, 0, compare_equal;
 
 uniform sampler2D camera_texture : hint_default_black, source_color;
 

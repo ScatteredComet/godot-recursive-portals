@@ -309,14 +309,14 @@ public partial class Portal : MeshInstance3D
                 MaterialOverride = GD.Load($"res://addons/godot_portal_system_by_donitzo/src/shaders/recursive_write_standardmaterial3Ds/write_pass_{i}.tres") as StandardMaterial3D
             };
 
-            if (debugVisible)
-            {
-                (recursedPortal.MaterialOverride as StandardMaterial3D).AlbedoColor = debugColor;
-            }
-            else
-            {
-                (recursedPortal.MaterialOverride as StandardMaterial3D).AlbedoColor = new(0, 0, 0, 0); // make invisible in real world
-            }
+            // if (debugVisible)
+            // {
+            //     (recursedPortal.MaterialOverride as StandardMaterial3D).AlbedoColor = debugColor;
+            // }
+            // else
+            // {
+            //     (recursedPortal.MaterialOverride as StandardMaterial3D).AlbedoColor = new(0, 0, 0, 0); // make invisible in real world
+            // }
 
             AddChild(recursedPortal);
 

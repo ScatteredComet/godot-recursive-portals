@@ -1,6 +1,9 @@
 [gd_resource type="StandardMaterial3D" format=3 uid="uid://dp16jxy0nvi48"]
 
 [resource]
+render_priority = -100
 cull_mode = 2
+depth_test = 1
+shading_mode = 0
 stencil_mode = 3
-stencil_flags = 2
+stencil_flags = 4
