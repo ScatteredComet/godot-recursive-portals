@@ -92,12 +92,30 @@ public partial class Portal : MeshInstance3D
         {
             paused = !paused;
         }
+
+        // if (Input.IsActionJustPressed("debug_reset_subviewports"))
+        // {
+        //     foreach (Node node in passCameras)
+        //     {
+        //         node.QueueFree();
+        //     }
+        //     foreach (Node node in passSubViewports)
+        //     {
+        //         node.QueueFree();
+        //     }
+
+        //     passCameras.Clear();
+        //     passSubViewports.Clear();
+        //     CreateViewports();
+        // }
     }
 
     // call this once you've set up the portal (if using delayed_ready)
     public void Startup()
     {
         GD.Print($"{Name} is starting up");
+
+        ProcessPhysicsPriority = 1000;
         
         if (!IsInsideTree())
         {
@@ -137,7 +155,8 @@ public partial class Portal : MeshInstance3D
 
         // The portal shader renders the viewport on-top of the portal mesh in screen-space
         MaterialOverride = GD.Load("res://addons/godot_portal_system_by_donitzo/src/shaders/PortalShaderMaterial.tres") as ShaderMaterial;
-        MaterialOverride = MaterialOverride.Duplicate() as ShaderMaterial; // dupe so camera texture can be unique for each instance
+        // this MUST be a deep copy (I believe to copy over nextPasses) - otherwise only the portal which renders SECOND in the scene tree will render correctly (as it overwrites textures in the first portal's shader)
+        MaterialOverride = MaterialOverride.Duplicate(true) as ShaderMaterial; // dupe so camera texture can be unique for each instance
         
         // MaterialOverride.SetShaderParameter("fade_out_distance_max", fadeOutDistanceMax);
         // MaterialOverride.SetShaderParameter("fade_out_distance_min", fadeOutDistanceMin);
@@ -211,11 +230,10 @@ public partial class Portal : MeshInstance3D
 
             AddChild(passSubViewport);
             passSubViewport.AddChild(passCamera);
-            
-            // passCamera.ProcessPriority = ProcessPhysicsPriority + 100 - i;
-            // passSubViewport.ProcessPriority = ProcessPhysicsPriority + 100 - i;
 
             currentPassMaterial = currentPassMaterial.NextPass as ShaderMaterial;
+
+            // debug visuals
 
             if (cameraDebugMeshScene is not null)
             {
@@ -229,6 +247,7 @@ public partial class Portal : MeshInstance3D
         // Resize the viewport on the next _process
         secondsUntilResize = 0f;
     }
+
     private const int LowPhysicsPriority = 0;
     private const int HighPhysicsPriority = 10;
 
@@ -241,16 +260,16 @@ public partial class Portal : MeshInstance3D
             return;
         }
 
-        // if camera is facing this portal, make it render last (high phys priority)
+        // if camera is facing this portal, make it last in the scene tree
         // if (-mainCamera.GlobalBasis.Z.Dot(GlobalBasis.Z) < 0)
         // {
-        //     GD.Print($"{Name} is high priority");
-        //     GetParent().MoveChild(this, -1);
+        //     // GD.Print($"{Name} is high priority");
+        //     GetParent().MoveChild(this, 0);
         // }
         // else
         // {
-        //     GD.Print($"{Name} is low priority");
-        //     GetParent().MoveChild(this, 0);
+        //     // GD.Print($"{Name} is low priority");
+        //     GetParent().MoveChild(this, -1);
         // }
 
         if (passSubViewports.Count == 0)
@@ -263,10 +282,10 @@ public partial class Portal : MeshInstance3D
         for (int i = 0; i < recursionLimit; i++)
         {
             passCameras[i].GlobalTransform = RealToExitTransform(mainCamera.GlobalTransform, exitPortal.passPortals[i]);
+            
             try
             {
                 SetCameraClippingPlane(exitPortal.passCameras[i], this);
-                GD.Print(Name);
             }
             catch (ArgumentOutOfRangeException)
             {
